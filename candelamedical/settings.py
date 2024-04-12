@@ -19,7 +19,9 @@ NEWSPIDER_MODULE = "candelamedical.spiders"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 FEED_FORMAT = 'csv'
-FEED_URI = 'Vbeam®Perfecta.csv'
+# FEED_URI = 'Vbeam®Perfecta.csv'
+# FEED_URI = 'Vbeam®Primaa.csv'
+FEED_URI = 'GentlePro™Series.csv'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 

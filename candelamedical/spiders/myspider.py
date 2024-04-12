@@ -59,7 +59,9 @@ class MyspiderSpider(scrapy.Spider):
             "Wyoming": "82001"
         }
         for state, zipcode in state_zipcodes.items():
-            url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=9'
+            # url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=9'
+            # url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=10'
+            url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=6'
             yield scrapy.Request(url=url, callback=self.parse)
 
 
