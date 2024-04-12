@@ -1,46 +1,102 @@
-import scrapy
+import json
 
+import scrapy
+import csv
 class MyspiderSpider(scrapy.Spider):
     name = "myspider"
 
     def start_requests(self):
-        url = 'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address=94112&cf=find&treatment=any&brand=9'
-        # params = {
-        #     'country': 'United States',
-        #     'distance': '25',
-        #     'unit': 'm',
-        #     'address': '94112',
-        #     'cf': 'find',
-        #     'treatment': 'any',
-        #     'brand': '9',
-        # }
-        # params = {
-        #     'brand': '',
-        #     'cf': 'find',
-        #     'country': 'United States',
-        #     'address': '94112',
-        #     'treatment': 'any',
-        #     'distance': '25',
-        #     'unit': 'mi',
-        # }
-        # headers = {
-        #     'authority': 'candelamedical.com',
-        #     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        #     'accept-language': 'en',
-        #     'cookie': '_gcl_au=1.1.1036559884.1712691458; _omappvp=r5QynhWmu0gEWqdXR2FGLhus4IewGc7fRIYqDs2WFR6Uy62zXA4gD2ezA4cVbXK6oh6pSV5CXebUnVZoBP5sjNsEm8D6jTs4; _biz_uid=2587b61a41dd4401b94f1c8ad3d6affc; _mkto_trk=id:620-HCU-218&token:_mch-candelamedical.com-1712691462670-52455; _biz_flagsA=%7B%22Version%22%3A1%2C%22ViewThrough%22%3A%221%22%2C%22Mkto%22%3A%221%22%2C%22XDomain%22%3A%221%22%7D; _fbp=fb.1.1712691463696.1855001095; _gid=GA1.2.1910693231.1712956334; _gat_UA-190145697-2=1; arp_scroll_position=403; _biz_nA=4; _biz_pendingA=%5B%5D; _ga=GA1.2.878774029.1712691461; _ga_FCX99HCS7V=GS1.1.1712956334.2.1.1712956371.23.0.318828434; _ga_630HCMSM4C=GS1.1.1712956334.2.1.1712956371.23.0.0',
-        #     'referer': 'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address=94112&cf=find&treatment=any&brand=9',
-        #     'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
-        #     'sec-ch-ua-mobile': '?0',
-        #     'sec-ch-ua-platform': '"macOS"',
-        #     'sec-fetch-dest': 'document',
-        #     'sec-fetch-mode': 'navigate',
-        #     'sec-fetch-site': 'same-origin',
-        #     'sec-fetch-user': '?1',
-        #     'upgrade-insecure-requests': '1',
-        #     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-        # }
-        yield scrapy.Request(url=url, callback=self.parse)
+        state_zipcodes = {
+            "Alabama": "35004",
+            "Alaska": "99501",
+            "Arizona": "85001",
+            "Arkansas": "72201",
+            "California": "94112",
+            "Colorado": "80201",
+            "Connecticut": "06101",
+            "Delaware": "19901",
+            "Florida": "33101",
+            "Georgia": "30301",
+            "Hawaii": "96801",
+            "Idaho": "83701",
+            "Illinois": "60601",
+            "Indiana": "46201",
+            "Iowa": "50301",
+            "Kansas": "66101",
+            "Kentucky": "40201",
+            "Louisiana": "70112",
+            "Maine": "04101",
+            "Maryland": "21201",
+            "Massachusetts": "02101",
+            "Michigan": "48201",
+            "Minnesota": "55101",
+            "Mississippi": "39201",
+            "Missouri": "63101",
+            "Montana": "59001",
+            "Nebraska": "68101",
+            "Nevada": "89501",
+            "New Hampshire": "03101",
+            "New Jersey": "07001",
+            "New Mexico": "87101",
+            "New York": "10001",
+            "North Carolina": "27501",
+            "North Dakota": "58102",
+            "Ohio": "44101",
+            "Oklahoma": "73101",
+            "Oregon": "97201",
+            "Pennsylvania": "19101",
+            "Rhode Island": "02901",
+            "South Carolina": "29201",
+            "South Dakota": "57101",
+            "Tennessee": "37201",
+            "Texas": "73301",
+            "Utah": "84101",
+            "Vermont": "05601",
+            "Virginia": "23218",
+            "Washington": "98101",
+            "West Virginia": "25301",
+            "Wisconsin": "53201",
+            "Wyoming": "82001"
+        }
+        for state, zipcode in state_zipcodes.items():
+            url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=9'
+            yield scrapy.Request(url=url, callback=self.parse)
+
+
+
 
     def parse(self, response):
-        cards=response.xpath('//div[@result]')
-        print(len(cards))
+        try:
+            cards = response.xpath('//div[@class="result mb-4"]')
+
+            for card in cards:
+                data = {}
+                data['provider-name'] = card.xpath('.//h6[@class="px-3 py-2 mb-0 provider-name"]/text()').get()
+                data['street'] = card.xpath(
+                    './/div[@class="provider-info"]//div[@class="location-address"]/text()').get().replace('\n',
+                                                                                                           '').replace(
+                    "                                           ", "")
+
+                data['city'] = \
+                card.xpath('.//div[@class="provider-info"]//div[@class="location-address"]/text()[2]').get().rsplit(" ",
+                                                                                                                    1)[
+                    0].replace('\n', '').replace("                                           ", "")
+                data['state'] = \
+                card.xpath('.//div[@class="provider-info"]//div[@class="location-address"]/text()[2]').get().rsplit(" ",
+                                                                                                                    1)[
+                    1]
+                data['country'] = card.xpath(
+                    './/div[@class="provider-info"]//div[@class="location-address"]/text()[3]').get().replace('\n',
+                                                                                                              '').replace(
+                    "                                           ", "")
+                data['number'] = card.xpath('.//div[@class="col-lg-5"]//div[@class="provider-info"][1]/a/text()').get()
+                data['website link'] = card.xpath(
+                    './/div[@class="col-lg-5"]//div[@class="provider-info"][2]/a/@href').get()
+                data['in this location'] = ' '.join(card.xpath(
+                    './/div[@class="col-lg-5"]//div[@class="provider-info"][3]//div[@class="location-system"]//text()').extract())
+                yield data
+        except Exception as e:
+            print("Exception occurred", e)
+
+
+   
