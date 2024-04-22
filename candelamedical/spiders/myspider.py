@@ -6,63 +6,79 @@ class MyspiderSpider(scrapy.Spider):
     name = "myspider"
 
     def start_requests(self):
-        state_zipcodes = {
-            "Alabama": "35004",
-            "Alaska": "99501",
-            "Arizona": "85001",
-            "Arkansas": "72201",
-            "California": "94112",
-            "Colorado": "80201",
-            "Connecticut": "06101",
-            "Delaware": "19901",
-            "Florida": "33101",
-            "Georgia": "30301",
-            "Hawaii": "96801",
-            "Idaho": "83701",
-            "Illinois": "60601",
-            "Indiana": "46201",
-            "Iowa": "50301",
-            "Kansas": "66101",
-            "Kentucky": "40201",
-            "Louisiana": "70112",
-            "Maine": "04101",
-            "Maryland": "21201",
-            "Massachusetts": "02101",
-            "Michigan": "48201",
-            "Minnesota": "55101",
-            "Mississippi": "39201",
-            "Missouri": "63101",
-            "Montana": "59001",
-            "Nebraska": "68101",
-            "Nevada": "89501",
-            "New Hampshire": "03101",
-            "New Jersey": "07001",
-            "New Mexico": "87101",
-            "New York": "10001",
-            "North Carolina": "27501",
-            "North Dakota": "58102",
-            "Ohio": "44101",
-            "Oklahoma": "73101",
-            "Oregon": "97201",
-            "Pennsylvania": "19101",
-            "Rhode Island": "02901",
-            "South Carolina": "29201",
-            "South Dakota": "57101",
-            "Tennessee": "37201",
-            "Texas": "73301",
-            "Utah": "84101",
-            "Vermont": "05601",
-            "Virginia": "23218",
-            "Washington": "98101",
-            "West Virginia": "25301",
-            "Wisconsin": "53201",
-            "Wyoming": "82001"
-        }
-        for state, zipcode in state_zipcodes.items():
-            # url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=9'
-            # url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=10'
-            url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=6'
-            yield scrapy.Request(url=url, callback=self.parse)
+        # state_zipcodes = {
+        #     "Alabama": "35004",
+        #     "Alaska": "99501",
+        #     "Arizona": "85001",
+        #     "Arkansas": "72201",
+        #     "California": "94112",
+        #     "Colorado": "80201",
+        #     "Connecticut": "06101",
+        #     "Delaware": "19901",
+        #     "Florida": "33101",
+        #     "Georgia": "30301",
+        #     "Hawaii": "96801",
+        #     "Idaho": "83701",
+        #     "Illinois": "60601",
+        #     "Indiana": "46201",
+        #     "Iowa": "50301",
+        #     "Kansas": "66101",
+        #     "Kentucky": "40201",
+        #     "Louisiana": "70112",
+        #     "Maine": "04101",
+        #     "Maryland": "21201",
+        #     "Massachusetts": "02101",
+        #     "Michigan": "48201",
+        #     "Minnesota": "55101",
+        #     "Mississippi": "39201",
+        #     "Missouri": "63101",
+        #     "Montana": "59001",
+        #     "Nebraska": "68101",
+        #     "Nevada": "89501",
+        #     "New Hampshire": "03101",
+        #     "New Jersey": "07001",
+        #     "New Mexico": "87101",
+        #     "New York": "10001",
+        #     "North Carolina": "27501",
+        #     "North Dakota": "58102",
+        #     "Ohio": "44101",
+        #     "Oklahoma": "73101",
+        #     "Oregon": "97201",
+        #     "Pennsylvania": "19101",
+        #     "Rhode Island": "02901",
+        #     "South Carolina": "29201",
+        #     "South Dakota": "57101",
+        #     "Tennessee": "37201",
+        #     "Texas": "73301",
+        #     "Utah": "84101",
+        #     "Vermont": "05601",
+        #     "Virginia": "23218",
+        #     "Washington": "98101",
+        #     "West Virginia": "25301",
+        #     "Wisconsin": "53201",
+        #     "Wyoming": "82001"
+        # }
+        with open('data.csv', newline='') as csvfile:
+    # Create a CSV reader object that treats the first row as headers
+            csvreader = csv.DictReader(csvfile)
+            for row in csvreader:
+            # Access columns by header names
+                print(row['zip'])
+                zipcode=row['zip']
+                url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=6'
+                yield scrapy.Request(url=url, callback=self.parse)
+                
+                # input()
+            # for state, zipcode in state_zipcodes.items():
+                # 9)Vbeam® Perfecta
+                # 10)Vbeam® Prima
+                # 06)            Gentle Pro™ Series
+
+                # url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=10'
+                # url = f'https://candelamedical.com/patient/find-a-provider/?country=United+States&distance=25&unit=m&address={zipcode}&cf=find&treatment=any&brand=6'
+    
+        # Iterate over each row in the CSV file
+        
 
 
 
